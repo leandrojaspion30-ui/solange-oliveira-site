@@ -205,7 +205,7 @@ export default function Dashboard() {
                          </div>
                        </td>
                        <td className="px-6 py-4">
-                         <span className="text-xs font-bold text-slate-600">Site Elite</span>
+                         <span className="text-xs font-bold text-slate-600">Site da Solange</span>
                        </td>
                        <td className="px-6 py-4 text-xs font-medium text-slate-500">
                          Há 2 horas

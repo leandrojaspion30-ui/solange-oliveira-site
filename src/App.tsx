@@ -6,6 +6,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AIAssistant from './components/ai/AIAssistant';
 import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import SearchPage from './pages/Search';
 import PropertyDetails from './pages/PropertyDetails';
 import Login from './pages/Login';
@@ -58,6 +60,8 @@ export default function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+          <Route path="/sobre" element={<PublicLayout><About /></PublicLayout>} />
+          <Route path="/contato" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/imoveis" element={<PublicLayout><SearchPage /></PublicLayout>} />
           <Route path="/imovel/:id" element={<PublicLayout><PropertyDetails /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />

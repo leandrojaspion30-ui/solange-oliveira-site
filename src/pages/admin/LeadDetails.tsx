@@ -1,3 +1,4 @@
+import { BROKER } from '../../config/broker';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -161,7 +162,7 @@ export default function LeadDetails() {
   const openWhatsApp = () => {
     if (!lead) return;
     const cleanPhone = lead.whatsapp.replace(/\D/g, '');
-    const message = `Olá, ${lead.name}. Aqui é ${userProfile?.name} da Elite Imóveis. Vi que você demonstrou interesse no imóvel ${lead.propertyCode || ''}. Como posso ajudá-lo?`;
+    const message = `Olá, ${lead.name}. Aqui é ${userProfile?.name} do atendimento de ${BROKER.name}. Vi que você demonstrou interesse no imóvel ${lead.propertyCode || ''}. Como posso ajudá-lo?`;
     window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
   };
 

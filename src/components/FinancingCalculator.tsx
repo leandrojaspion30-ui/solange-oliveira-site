@@ -1,3 +1,4 @@
+import { BROKER } from '../config/broker';
 import React, { useState, useMemo } from 'react';
 import { 
   Calculator, 
@@ -205,7 +206,7 @@ export default function FinancingCalculator({
   };
 
   const getWhatsAppMessage = () => {
-    const text = `Olá! Gostaria de consultar condições de financiamento para o imóvel ${propertyCode || ''} - ${propertyTitle || 'Elite Imóveis'}:
+    const text = `Olá! Gostaria de consultar condições de financiamento para o imóvel ${propertyCode || ''} - ${propertyTitle || BROKER.name}:
 - Valor do Imóvel: ${formatCurrency(price)}
 - Entrada simulada: ${formatCurrency(totalDownPayment)} (${downPaymentPercent}%)
 - Financiamento: ${formatCurrency(simulation.loanAmount)} em ${termYears} anos (${termMonths} meses)
@@ -216,7 +217,7 @@ export default function FinancingCalculator({
   };
 
   const copySimulationDetails = () => {
-    const summary = `Simulação de Financiamento - ${propertyTitle || 'Elite Imóveis'} (${propertyCode || 'Imóvel'})
+    const summary = `Simulação de Financiamento - ${propertyTitle || BROKER.name} (${propertyCode || 'Imóvel'})
 Valor do Imóvel: ${formatCurrency(price)}
 Entrada: ${formatCurrency(totalDownPayment)} (${downPaymentPercent}%)
 Valor Financiado: ${formatCurrency(simulation.loanAmount)}

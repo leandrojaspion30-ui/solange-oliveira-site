@@ -47,7 +47,7 @@ export default function Register() {
       >
         <div className="text-center mb-10">
           <h1 className="text-4xl font-black text-primary tracking-tighter mb-2">Crie sua conta</h1>
-          <p className="text-slate-500 font-medium">Junte-se à Elite Imóveis hoje mesmo</p>
+          <p className="text-slate-500 font-medium">Encontre seu próximo lar com Solange Oliveira</p>
         </div>
 
         {error && (

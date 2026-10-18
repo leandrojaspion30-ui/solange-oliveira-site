@@ -1,3 +1,4 @@
+import { BROKER } from '../../config/broker';
 import { 
   LayoutDashboard, 
   Home, 
@@ -81,7 +82,7 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed }: { isCollap
       <div className="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shrink-0">
-            <span className="text-white font-black text-xl">E</span>
+            <Home size={23} className="text-white" aria-hidden="true" />
           </div>
           {!isCollapsed && (
             <motion.div 
@@ -89,7 +90,7 @@ export default function AdminSidebar({ isCollapsed, setIsCollapsed }: { isCollap
               animate={{ opacity: 1 }}
               className="flex flex-col"
             >
-              <span className="font-black text-lg tracking-tighter leading-none">ELITE</span>
+              <span className="font-semibold text-base leading-tight">{BROKER.name}</span>
               <span className="text-[10px] font-black tracking-[0.2em] text-accent leading-none">ADMIN</span>
             </motion.div>
           )}

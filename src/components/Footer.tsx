@@ -1,98 +1,19 @@
 import { Link } from 'react-router-dom';
-import { Instagram, Facebook, Linkedin, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, BadgeCheck, Mail, Phone } from 'lucide-react';
+import { BROKER } from '../config/broker';
+import BrandLogo from './BrandLogo';
+import ContactLink from './ContactLink';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-primary text-slate-400 pt-32 pb-12 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
-          {/* Brand & Mission */}
-          <div className="space-y-8">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-12 h-12 bg-white flex items-center justify-center rounded-2xl transition-transform group-hover:scale-110">
-                <span className="text-primary font-black text-2xl">E</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-black text-2xl leading-none text-white tracking-tighter">ELITE</span>
-                <span className="text-[10px] tracking-[0.3em] font-black leading-none text-accent">IMÓVEIS</span>
-              </div>
-            </Link>
-            <p className="text-sm leading-relaxed max-w-xs font-medium">
-              Elevando o patamar das transações imobiliárias. Curadoria exclusiva para quem não aceita nada menos que a excelência.
-            </p>
-            <div className="flex items-center gap-4">
-              {[Instagram, Facebook, Linkedin].map((Icon, i) => (
-                <a key={i} href="#" className="w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center hover:bg-accent hover:border-accent hover:text-white transition-all duration-300">
-                  <Icon size={20} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-black uppercase tracking-[0.2em] text-[10px] mb-8">Navegação</h4>
-            <ul className="space-y-4 text-sm font-bold uppercase tracking-widest">
-              <li><Link to="/imoveis" className="hover:text-accent transition-colors">Portfólio</Link></li>
-              <li><Link to="/venda-seu-imovel" className="hover:text-accent transition-colors">Venda seu Imóvel</Link></li>
-              <li><Link to="/sobre" className="hover:text-accent transition-colors">Quem Sou</Link></li>
-              <li><Link to="/blog" className="hover:text-accent transition-colors">Insights</Link></li>
-              <li><Link to="/contato" className="hover:text-accent transition-colors">Atendimento</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h4 className="text-white font-black uppercase tracking-[0.2em] text-[10px] mb-8">Direct</h4>
-            <ul className="space-y-6 text-sm font-medium">
-              <li className="flex items-start gap-4">
-                <MapPin size={20} className="text-accent shrink-0" />
-                <span className="leading-relaxed">Av. Brg. Faria Lima, 3477<br />Itaim Bibi, São Paulo - SP</span>
-              </li>
-              <li className="flex items-center gap-4">
-                <Phone size={20} className="text-accent shrink-0" />
-                <span>+55 11 99999-9999</span>
-              </li>
-              <li className="flex items-center gap-4">
-                <Mail size={20} className="text-accent shrink-0" />
-                <span>exclusive@eliteimoveis.com</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h4 className="text-white font-black uppercase tracking-[0.2em] text-[10px] mb-8">Exclusividade</h4>
-            <p className="text-sm mb-6 font-medium">Receba oportunidades de investimento e lançamentos exclusivos.</p>
-            <form className="relative group">
-              <input 
-                type="email" 
-                placeholder="Seu e-mail corporativo"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm text-white focus:outline-none focus:border-accent transition-all placeholder:text-slate-500"
-              />
-              <button className="absolute right-2 top-2 w-10 h-10 bg-accent text-white rounded-xl flex items-center justify-center hover:bg-accent-hover transition-colors shadow-lg">
-                <ArrowRight size={20} />
-              </button>
-            </form>
-          </div>
+    <footer className="broker-footer">
+      <div className="site-container">
+        <div className="footer-grid">
+          <div className="footer-brand"><Link to="/" aria-label="Solange Oliveira — início"><BrandLogo light /></Link><p>{BROKER.slogan}</p><span className="footer-creci"><BadgeCheck size={18} />{BROKER.creci}</span></div>
+          <div className="footer-navigation"><h3>Encontre seu caminho</h3><Link to="/imoveis?purpose=SALE">Imóveis à venda</Link><Link to="/imoveis?purpose=RENT">Imóveis para alugar</Link><Link to="/sobre">Conheça a Solange</Link><Link to="/contato">Atendimento</Link></div>
+          <div className="footer-invitation"><h3>Seu sonho, meu compromisso!</h3><p>Compra e venda com atendimento personalizado, segurança e transparência.</p>{BROKER.email && <a href={`mailto:${BROKER.email}`}><Mail size={17} />{BROKER.email}</a>}{BROKER.phone && <a href={`tel:${BROKER.phone.replace(/[^\d+]/g, '')}`}><Phone size={17} />{BROKER.phone}</a>}<ContactLink className="footer-contact-link">Vamos realizar esse sonho juntos <ArrowUpRight size={18} /></ContactLink></div>
         </div>
-
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-              CRECI 123.456-J | Elite Real Estate Advisors
-            </p>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
-              &copy; {currentYear} Elite Imóveis. Absolute Excellence.
-            </p>
-          </div>
-          <div className="flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em]">
-            <a href="#" className="hover:text-accent transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-accent transition-colors">Terms of Service</a>
-          </div>
-        </div>
+        <div className="footer-bottom"><p>© {new Date().getFullYear()} {BROKER.name}. Todos os direitos reservados.</p><span>Corretora de imóveis · {BROKER.creci}</span></div>
       </div>
     </footer>
   );

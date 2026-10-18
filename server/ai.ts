@@ -1,15 +1,32 @@
+import { BROKER } from '../src/config/broker';
 import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
 import { db } from "./firebase";
 import { collection, query, where, getDocs, limit, orderBy, addDoc, serverTimestamp, updateDoc, doc } from "firebase/firestore";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
+// Initialize only when an AI feature is used, so the site can run without a key.
+let aiClient: GoogleGenAI | undefined;
+
+function getAI(): GoogleGenAI {
+  if (aiClient) return aiClient;
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey?.trim()) {
+    throw Object.assign(
+      new Error('Assistente de IA indisponível: configure GEMINI_API_KEY no servidor.'),
+      { statusCode: 503 }
+    );
   }
-});
+
+  aiClient = new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      }
+    }
+  });
+  return aiClient;
+}
 
 const searchPropertiesTool: FunctionDeclaration = {
   name: "searchProperties",
@@ -51,17 +68,20 @@ const createLeadTool: FunctionDeclaration = {
 };
 
 export async function handleAIChat(messages: any[], conversationId?: string) {
+  const ai = getAI();
   const model = ai.models.generateContent({
     model: "gemini-3.8-flash",
     config: {
-      systemInstruction: `Você é um assistente imobiliário profissional e elegante da Elite Imóveis.
-Sua missão é ajudar visitantes a encontrar o imóvel ideal e qualificar leads para os corretores humanos.
+      systemInstruction: `Você é o assistente virtual da corretora ${BROKER.name}, ${BROKER.creci}.
+Apresente-se sempre como assistente virtual, nunca como a própria Solange.
+O lema do atendimento é: ${BROKER.promise} Não invente telefone, e-mail, endereço, histórico profissional ou resultados de vendas.
+Sua missão é ajudar visitantes a encontrar o imóvel ideal e encaminhar interesses para a corretora Solange Oliveira.
 
 DIRETRIZES FUNDAMENTAIS:
 1. NUNCA invente imóveis ou características que não existam no banco de dados.
 2. Seja prestativo, educado e profissional.
 3. Use os dados reais consultados via ferramentas.
-4. Se não encontrar uma informação, diga claramente: "Não encontrei essa informação nos dados disponíveis. Posso encaminhar sua dúvida para um corretor."
+4. Se não encontrar uma informação, diga claramente: "Não encontrei essa informação nos dados disponíveis. Posso encaminhar sua dúvida para a corretora Solange Oliveira."
 5. Colete informações do lead (nome, whatsapp, intenção) de forma natural durante a conversa.
 6. Quando o usuário demonstrar interesse real ou fornecer os dados necessários, use a ferramenta 'createLead' para registrar o lead no CRM.
 7. Para recomendações, mencione a porcentagem de compatibilidade baseada nos filtros do usuário.
@@ -210,6 +230,7 @@ async function executePropertySearch(filters: any) {
 }
 
 export async function generatePropertyDescription(propertyData: any) {
+  const ai = getAI();
   const model = ai.models.generateContent({
     model: "gemini-3.8-flash",
     config: {
@@ -225,12 +246,13 @@ Retorne um JSON com os campos: title, shortDescription, longDescription, highlig
 }
 
 export async function summarizeConversation(messages: any[]) {
+  const ai = getAI();
   const model = ai.models.generateContent({
     model: "gemini-3.1-pro-preview",
     config: {
-      systemInstruction: "Resuma a conversa entre o assistente de IA e o cliente, destacando: Intenção, Orçamento, Localização Preferida, Perfil do Imóvel e Próximos Passos Sugeridos.",
+      systemInstruction: "Resuma a conversa entre o assistente virtual da Solange Oliveira e o cliente, destacando: Intenção, Orçamento, Localização Preferida, Perfil do Imóvel e Próximos Passos Sugeridos.",
     },
-    contents: `Resuma esta conversa para o corretor:
+    contents: `Resuma esta conversa para a corretora Solange Oliveira:
 ${JSON.stringify(messages, null, 2)}`
   });
 

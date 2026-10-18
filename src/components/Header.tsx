@@ -1,208 +1,91 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Phone, MessageCircle, X, Search, Heart, User, LogOut, LayoutDashboard } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, MessageCircle, X, Heart, User, LogOut, LayoutDashboard, ArrowUpRight } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { logoutUser } from '../firebase/auth';
+import BrandLogo from './BrandLogo';
+import ContactLink from './ContactLink';
+import { BROKER } from '../config/broker';
+
+const navLinks = [
+  { name: 'Início', href: '/' },
+  { name: 'Comprar', href: '/imoveis?purpose=SALE' },
+  { name: 'Alugar', href: '/imoveis?purpose=RENT' },
+  { name: 'A Solange', href: '/sobre' },
+  { name: 'Contato', href: '/contato' },
+];
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { currentUser, userProfile, isAdmin, isBroker } = useAuth();
+  const { currentUser, isAdmin, isBroker, logout } = useAuth();
   const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => { setIsMobileMenuOpen(false); }, [pathname, search]);
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    if (!isMobileMenuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButton.current?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+      if (event.key === 'Tab') {
+        const controls = dialogRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+        if (!controls?.length) return;
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener('keydown', handleKey);
+      menuButton.current?.focus();
+    };
+  }, [isMobileMenuOpen]);
 
   const handleLogout = async () => {
-    try {
-      await logoutUser();
-      navigate('/');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+    try { await logout(); setIsMobileMenuOpen(false); navigate('/'); }
+    catch (error) { console.error('Erro ao sair:', error); }
   };
-
-  const navLinks = [
-    { name: 'Início', href: '/' },
-    { name: 'Comprar', href: '/imoveis?purpose=SALE' },
-    { name: 'Alugar', href: '/imoveis?purpose=RENT' },
-    { name: 'Imóveis', href: '/imoveis' },
-    { name: 'Sobre', href: '/sobre' },
-    { name: 'Contato', href: '/contato' },
-  ];
+  const active = (href: string) => href.includes('?') ? `${pathname}${search}` === href : pathname === href;
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg shadow-slate-900/5 py-4' : 'bg-transparent py-6'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-12 h-12 bg-primary flex items-center justify-center rounded-xl shadow-xl transition-transform group-hover:scale-105">
-            <span className="text-white font-black text-2xl">E</span>
-          </div>
-          <div className="flex flex-col">
-            <span className={`font-black text-2xl tracking-tighter leading-none transition-colors ${isScrolled ? 'text-primary' : 'text-primary md:text-white'}`}>ELITE</span>
-            <span className={`text-[10px] tracking-[0.3em] font-bold leading-none transition-colors ${isScrolled ? 'text-accent' : 'text-accent md:text-accent/90'}`}>IMÓVEIS</span>
-          </div>
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.href}
-              className={`text-sm font-bold uppercase tracking-widest transition-all hover:text-accent relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full ${
-                isScrolled ? 'text-slate-600' : 'text-slate-700 md:text-white/80'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-2">
-            <Link 
-              to="/favoritos"
-              className={`p-2.5 rounded-xl transition-all ${
-                isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-700 md:text-white/80 md:hover:bg-white/10'
-              }`}
-            >
-              <Heart size={20} />
-            </Link>
-            
+    <>
+      <header className="broker-header">
+        <div className="site-container header-inner">
+          <Link to="/" aria-label="Solange Oliveira — início" className="header-brand"><BrandLogo /></Link>
+          <nav className="desktop-nav" aria-label="Menu principal">
+            {navLinks.map(link => <Link key={link.href} to={link.href} className={active(link.href) ? 'active' : ''} aria-current={active(link.href) ? 'page' : undefined}>{link.name}</Link>)}
+          </nav>
+          <div className="header-actions">
+            <Link to="/favoritos" className="header-icon" aria-label="Meus imóveis favoritos"><Heart size={20} strokeWidth={1.65} /></Link>
             {currentUser ? (
-              <div className="flex items-center gap-2">
-                {(isAdmin || isBroker) && (
-                  <Link 
-                    to="/dashboard"
-                    className={`p-2.5 rounded-xl transition-all ${
-                      isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-700 md:text-white/80 md:hover:bg-white/10'
-                    }`}
-                  >
-                    <LayoutDashboard size={20} />
-                  </Link>
-                )}
-                <button 
-                  onClick={handleLogout}
-                  className={`p-2.5 rounded-xl transition-all ${
-                    isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-700 md:text-white/80 md:hover:bg-white/10'
-                  }`}
-                >
-                  <LogOut size={20} />
-                </button>
-              </div>
-            ) : (
-              <Link 
-                to="/login"
-                className={`p-2.5 rounded-xl transition-all ${
-                  isScrolled ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-700 md:text-white/80 md:hover:bg-white/10'
-                }`}
-              >
-                <User size={20} />
-              </Link>
-            )}
+              <>
+                {(isAdmin || isBroker) && <Link to="/dashboard" className="header-icon" aria-label="Abrir painel administrativo"><LayoutDashboard size={20} /></Link>}
+                <button onClick={handleLogout} className="header-icon" aria-label="Sair da conta"><LogOut size={20} /></button>
+              </>
+            ) : <Link to="/login" className="header-icon" aria-label="Entrar na conta"><User size={20} strokeWidth={1.65} /></Link>}
+            <ContactLink className="header-contact"><MessageCircle size={17} /> Vamos conversar</ContactLink>
+            <button ref={menuButton} className="mobile-menu-button" onClick={() => setIsMobileMenuOpen(true)} aria-label="Abrir menu" aria-expanded={isMobileMenuOpen} aria-controls="mobile-navigation"><Menu size={27} strokeWidth={1.6} /></button>
           </div>
-          
-          <a 
-            href="https://wa.me/5500000000000" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 bg-accent hover:bg-accent-hover text-white px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-accent/20 hover:shadow-accent/30 active:scale-95"
-          >
-            <MessageCircle size={18} />
-            WhatsApp
-          </a>
-          
-          <button 
-            className={`lg:hidden p-2 rounded-xl transition-colors ${isScrolled ? 'text-primary' : 'text-primary md:text-white'}`}
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu size={28} />
-          </button>
         </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 bg-white z-[60] flex flex-col"
-          >
-            <div className="flex items-center justify-between p-6 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-slate-900 flex items-center justify-center rounded-lg">
-                  <span className="text-white font-bold">E</span>
-                </div>
-                <span className="font-bold text-lg text-slate-900">ELITE IMÓVEIS</span>
-              </div>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-500">
-                <X size={24} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto py-8 px-6 space-y-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-2xl font-semibold text-slate-900"
-                >
-                  {link.name}
-                </Link>
-              ))}
-              {currentUser && (isAdmin || isBroker) && (
-                <Link
-                  to="/dashboard"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-2xl font-semibold text-slate-900"
-                >
-                  Painel de Controle
-                </Link>
-              )}
-            </div>
-            <div className="p-6 border-t border-slate-100 space-y-4">
-              {currentUser ? (
-                <button 
-                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-                  className="flex items-center justify-center gap-2 w-full py-4 border border-slate-200 rounded-xl font-semibold text-slate-700"
-                >
-                  <LogOut size={20} />
-                  Sair da Conta
-                </button>
-              ) : (
-                <Link 
-                  to="/login" 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-4 border border-slate-200 rounded-xl font-semibold text-slate-700"
-                >
-                  <User size={20} />
-                  Entrar na Conta
-                </Link>
-              )}
-              <a 
-                href="https://wa.me/5500000000000" 
-                className="flex items-center justify-center gap-2 w-full py-4 bg-emerald-600 text-white rounded-xl font-semibold"
-              >
-                <MessageCircle size={20} />
-                Falar com Corretor
-              </a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+      </header>
+      {isMobileMenuOpen && (
+        <div className="mobile-navigation" id="mobile-navigation" ref={dialogRef} role="dialog" aria-modal="true" aria-label="Navegação">
+          <div className="mobile-navigation-top"><Link to="/" onClick={() => setIsMobileMenuOpen(false)}><BrandLogo /></Link><button ref={closeButton} onClick={() => setIsMobileMenuOpen(false)} aria-label="Fechar menu"><X size={28} /></button></div>
+          <nav aria-label="Menu para celular">{navLinks.map((link, index) => <Link key={link.href} to={link.href} onClick={() => setIsMobileMenuOpen(false)}><span>0{index + 1}</span>{link.name}<ArrowUpRight size={22} /></Link>)}</nav>
+          <div className="mobile-navigation-bottom">
+            {(isAdmin || isBroker) && <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>Painel administrativo</Link>}
+            {currentUser ? <button onClick={handleLogout}>Sair da conta</button> : <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}><User size={18} /> Entrar na conta</Link>}
+            <ContactLink className="broker-button broker-button-dark" onClick={() => setIsMobileMenuOpen(false)}>Fale com a Solange <MessageCircle size={18} /></ContactLink>
+            <small>{BROKER.creci} · {BROKER.promise}</small>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

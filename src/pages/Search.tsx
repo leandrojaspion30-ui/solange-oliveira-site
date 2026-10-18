@@ -16,14 +16,15 @@ export default function SearchPage() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [bedrooms, setBedrooms] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const p = searchParams.get('purpose') as PropertyPurpose;
-    if (p) setPurpose(p);
+    setPurpose(p || '');
     const t = searchParams.get('type') as PropertyType;
-    if (t) setType(t);
+    setType(t || '');
+    setSearchQuery(searchParams.get('q') || '');
   }, [searchParams]);
 
   const filteredProperties = useMemo(() => {
@@ -48,8 +49,9 @@ export default function SearchPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="mb-12">
           <span className="text-accent font-black uppercase tracking-[0.3em] text-[10px] mb-4 block">Catálogo Completo</span>
+          <div className="catalog-notice">Imóveis de demonstração</div>
           <h1 className="text-4xl md:text-6xl font-black text-primary tracking-tighter mb-4">Explorar Imóveis</h1>
-          <p className="text-slate-500 max-w-2xl text-lg font-medium">Utilize os filtros inteligentes para encontrar a residência que harmoniza perfeitamente com seu estilo de vida e objetivos.</p>
+          <p className="text-slate-500 max-w-2xl text-lg font-medium">Encontre opções para o seu próximo passo. Busque por cidade, bairro, tipo de imóvel ou faixa de preço.</p>
         </div>
 
         {/* Filters Bar */}

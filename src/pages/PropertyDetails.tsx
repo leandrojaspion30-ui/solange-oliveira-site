@@ -1,3 +1,5 @@
+import { BROKER } from '../config/broker';
+import ContactLink from '../components/ContactLink';
 import { useParams, Link } from 'react-router-dom';
 import { MOCK_PROPERTIES } from '../data';
 import { 
@@ -168,7 +170,7 @@ export default function PropertyDetails() {
               </span>
               {property.featured && (
                 <span className="bg-accent text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl border border-accent/30">
-                  Destaque Elite
+                  Imóvel em destaque
                 </span>
               )}
             </div>
@@ -305,8 +307,8 @@ export default function PropertyDetails() {
               {/* Form Card */}
               <div id="contact-form-section" className="bg-primary p-10 rounded-[48px] text-white shadow-2xl relative overflow-hidden">
                 <div className="absolute -top-20 -right-20 w-64 h-64 bg-accent/20 blur-[80px] rounded-full" />
-                <h3 className="text-3xl font-black mb-4 relative z-10 tracking-tight leading-tight">Tenho Interesse Exclusivo</h3>
-                <p className="text-slate-400 text-sm mb-10 relative z-10 font-medium">Consultoria personalizada para o seu próximo grande passo.</p>
+                <h3 className="text-3xl font-black mb-4 relative z-10 tracking-tight leading-tight">Gostei deste imóvel</h3>
+                <p className="text-slate-400 text-sm mb-10 relative z-10 font-medium">Atendimento personalizado com Solange Oliveira.</p>
                 
                 {success ? (
                   <motion.div 
@@ -318,7 +320,7 @@ export default function PropertyDetails() {
                       <Check size={32} className="text-white" />
                     </div>
                     <h4 className="text-xl font-black mb-2">Mensagem Enviada!</h4>
-                    <p className="text-slate-300 text-sm">Recebemos seu interesse. Um de nossos consultores entrará em contato em breve.</p>
+                    <p className="text-slate-300 text-sm">Seu interesse foi registrado. Obrigada por compartilhar seus planos e seus dados de contato.</p>
                     <button 
                       onClick={() => setSuccess(false)}
                       className="mt-6 text-[10px] font-black uppercase tracking-widest text-accent hover:underline"
@@ -380,18 +382,18 @@ export default function PropertyDetails() {
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
                       ) : (
                         <div className="flex items-center justify-center gap-3">
-                          Agendar Consultoria
+                          Enviar meu interesse
                           <Calendar size={20} />
                         </div>
                       )}
                     </button>
-                    <button 
-                      type="button"
-                      className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-5 rounded-2xl transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-sm"
+                    <ContactLink
+                      message={`Olá, Solange! Tenho interesse no imóvel ${property.code}: ${property.title}.`}
+                      className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 text-sm"
                     >
-                      Canal WhatsApp
-                      <MessageCircle size={20} className="text-emerald-500" />
-                    </button>
+                      {BROKER.whatsapp ? 'Falar no WhatsApp' : 'Informações de contato'}
+                      <MessageCircle size={20} className="text-accent" />
+                    </ContactLink>
                   </form>
                 )}
               </div>
@@ -400,19 +402,19 @@ export default function PropertyDetails() {
               <div className="bg-slate-50 p-8 rounded-[40px] border border-slate-100 group hover:bg-white hover:shadow-2xl transition-all duration-500">
                 <div className="flex items-center gap-6 mb-6">
                   <div className="relative">
-                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=150" className="w-20 h-20 rounded-[24px] object-cover shadow-xl group-hover:scale-105 transition-transform grayscale hover:grayscale-0" />
+                    <img src={BROKER.avatar} alt="Solange Oliveira, corretora de imóveis" width="80" height="80" className="w-20 h-20 rounded-[24px] object-cover shadow-xl group-hover:scale-105 transition-transform" />
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent rounded-xl flex items-center justify-center text-white shadow-lg">
                       <Shield size={16} />
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-black text-primary text-xl leading-tight">Ricardo Santos</h4>
-                    <p className="text-[10px] text-accent font-black uppercase tracking-widest mt-1">CRECI 123.456-F</p>
+                    <h4 className="font-black text-primary text-xl leading-tight">{BROKER.name}</h4>
+                    <p className="text-[10px] text-accent font-black uppercase tracking-widest mt-1">{BROKER.creci}</p>
                   </div>
                 </div>
-                <p className="text-slate-500 text-sm font-medium leading-relaxed mb-6 italic">"Compromisso com a transparência e a excelência em cada etapa do seu negócio imobiliário."</p>
+                <p className="text-slate-500 text-sm font-medium leading-relaxed mb-6 italic">“{BROKER.promise}”</p>
                 <Link to="/sobre" className="text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:text-accent flex items-center gap-2 transition-colors">
-                  Perfil Consultivo
+                  Conheça a Solange
                   <ChevronRight size={14} />
                 </Link>
               </div>

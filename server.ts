@@ -1,14 +1,15 @@
+import "dotenv/config";
 import express from "express";
+import { createServer as createHttpServer } from "node:http";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import dotenv from "dotenv";
 import { handleAIChat, generatePropertyDescription, summarizeConversation } from "./server/ai";
 
-dotenv.config();
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const httpServer = createHttpServer(app);
+  const PORT = Number(process.env.PORT || 3000);
 
   app.use(express.json());
 
@@ -20,7 +21,7 @@ async function startServer() {
       res.json(response);
     } catch (error: any) {
       console.error("AI Chat Error:", error);
-      res.status(500).json({ error: error.message });
+      res.status(error.statusCode === 503 ? 503 : 500).json({ error: error.message });
     }
   });
 
@@ -31,7 +32,7 @@ async function startServer() {
       res.json({ description });
     } catch (error: any) {
       console.error("AI Describe Error:", error);
-      res.status(500).json({ error: error.message });
+      res.status(error.statusCode === 503 ? 503 : 500).json({ error: error.message });
     }
   });
 
@@ -42,7 +43,7 @@ async function startServer() {
       res.json({ summary });
     } catch (error: any) {
       console.error("AI Summarize Error:", error);
-      res.status(500).json({ error: error.message });
+      res.status(error.statusCode === 503 ? 503 : 500).json({ error: error.message });
     }
   });
 
@@ -54,7 +55,10 @@ async function startServer() {
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: process.env.DISABLE_HMR === "true" ? false : { server: httpServer },
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);
@@ -66,7 +70,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }

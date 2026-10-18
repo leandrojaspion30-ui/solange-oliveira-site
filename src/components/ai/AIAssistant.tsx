@@ -1,3 +1,4 @@
+import { BROKER } from '../../config/broker';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   MessageSquare, 
@@ -75,7 +76,7 @@ export default function AIAssistant() {
     const greeting: Omit<AIMessage, 'id' | 'createdAt'> = {
       conversationId: id,
       role: 'model',
-      content: 'Olá! 👋 Sou o assistente imobiliário da Elite Imóveis. Posso ajudar você a encontrar um imóvel, entender as opções disponíveis ou falar com um corretor. O que você procura hoje?'
+      content: `Olá! Sou o assistente virtual da corretora ${BROKER.name}. Posso ajudar você a encontrar um imóvel, entender as opções disponíveis ou encaminhar seu interesse para a Solange. O que você procura hoje?`
     };
     await addAIMessage(greeting);
     loadMessages(id);
@@ -172,10 +173,10 @@ export default function AIAssistant() {
                   <Bot size={24} />
                 </div>
                 <div>
-                  <h3 className="font-black text-sm uppercase tracking-tighter">Elite AI</h3>
+                  <h3 className="font-black text-sm uppercase tracking-tighter">Assistente da Solange</h3>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold text-white/70 uppercase">Online Agora</span>
+                    <span className="text-[10px] font-bold text-white/70 uppercase">Assistente virtual</span>
                   </div>
                 </div>
               </div>
@@ -239,7 +240,7 @@ export default function AIAssistant() {
                   "Comprar casa",
                   "Alugar apto",
                   "Até R$ 500k",
-                  "Falar com corretor"
+                  "Falar com a Solange"
                 ].map(action => (
                   <button
                     key={action}
@@ -276,7 +277,7 @@ export default function AIAssistant() {
                 </button>
               </div>
               <p className="text-[9px] text-slate-400 mt-2 text-center uppercase font-black tracking-widest">
-                Elite AI Inteligência Imobiliária
+                Solange Oliveira · Assistente virtual
               </p>
             </form>
           </motion.div>

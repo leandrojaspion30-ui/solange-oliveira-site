@@ -1,3 +1,4 @@
+import { BROKER } from '../../config/broker';
 import { 
   Save, 
   Globe, 
@@ -21,12 +22,12 @@ import { motion, AnimatePresence } from 'motion/react';
 export default function Settings() {
   const [settings, setSettings] = useState<SiteSettings>({
     id: 'general',
-    siteName: 'Elite Imóveis',
-    description: '',
-    contactEmail: '',
-    contactPhone: '',
-    whatsapp: '',
-    creci: '',
+    siteName: BROKER.name,
+    description: BROKER.slogan,
+    contactEmail: BROKER.email,
+    contactPhone: BROKER.phone,
+    whatsapp: BROKER.whatsapp,
+    creci: BROKER.creci,
     address: '',
     socialMedia: {
       instagram: '',
@@ -35,8 +36,8 @@ export default function Settings() {
       youtube: ''
     },
     theme: {
-      primaryColor: '#1A1D23',
-      accentColor: '#D4AF37'
+      primaryColor: '#102431',
+      accentColor: '#C8A35B'
     },
     updatedAt: new Date()
   });
@@ -82,7 +83,7 @@ export default function Settings() {
         <div>
           <span className="text-accent font-black uppercase tracking-[0.3em] text-[10px] mb-2 block">Personalização do Sistema</span>
           <h1 className="text-4xl font-black text-primary tracking-tighter">Configurações</h1>
-          <p className="text-slate-500 font-medium mt-1">Gerencie a identidade visual e informações da sua imobiliária.</p>
+          <p className="text-slate-500 font-medium mt-1">Gerencie a identidade visual e informações do seu atendimento imobiliário.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -129,7 +130,7 @@ export default function Settings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nome da Imobiliária</label>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nome profissional</label>
                   <input 
                     type="text" 
                     className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-accent font-bold text-sm"
@@ -141,7 +142,8 @@ export default function Settings() {
                   <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Slogan Principal</label>
                   <input 
                     type="text" 
-                    placeholder="Ex: Seu sonho, nosso compromisso."
+                    value={settings.description}
+                    onChange={(e) => setSettings({ ...settings, description: e.target.value })}
                     className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-accent font-bold text-sm"
                   />
                 </div>
@@ -150,16 +152,16 @@ export default function Settings() {
               <div className="pt-8 border-t border-slate-50">
                  <div className="flex items-start gap-8">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Logo da Empresa</label>
-                      <div className="w-32 h-32 rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-300 hover:border-accent hover:text-accent transition-all cursor-pointer group">
-                        <Upload size={24} className="mb-2 group-hover:scale-110 transition-transform" />
-                        <span className="text-[8px] font-black uppercase tracking-widest">Alterar Logo</span>
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Marca profissional</label>
+                      <div className="w-32 h-32 rounded-3xl bg-surface border border-accent/20 flex flex-col gap-3 items-center justify-center p-4">
+                        <img src={BROKER.symbol} alt="Símbolo da marca Solange Oliveira" width="96" height="40" />
+                        <span className="text-[9px] text-primary text-center">Solange Oliveira</span>
                       </div>
                     </div>
                     <div className="flex-1 space-y-6">
                        <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cresci / Licença</label>
-                         <input type="text" placeholder="Ex: 12345-J" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-accent font-bold text-sm" />
+                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">CRECI / Registro profissional</label>
+                         <input type="text" value={settings.creci} onChange={(e) => setSettings({ ...settings, creci: e.target.value })} className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:border-accent font-bold text-sm" />
                        </div>
                     </div>
                  </div>

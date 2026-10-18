@@ -1,6 +1,6 @@
 {
-  "name": "Elite Imóveis",
-  "description": "Plataforma imobiliária de alto padrão para compra, venda e aluguel de imóveis com atendimento personalizado.",
+  "name": "Solange Oliveira — Corretora de imóveis",
+  "description": "Solange Oliveira, CRECI-SP 229989. Realizando sonhos, abrindo portas para o seu futuro. Compra e venda com atendimento personalizado, segurança e transparência.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
